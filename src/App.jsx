@@ -6,13 +6,16 @@ function App() {
     const stored = localStorage.getItem('products');
     return stored ? JSON.parse(stored) : [];
   });
+  // Featured products: store featured status in product object
+  const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     image: '',
     price: '',
-    info: ''
+    info: '',
+    featured: false
   });
 
   useEffect(() => {
@@ -27,8 +30,11 @@ function App() {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
   const handleFormSubmit = (e) => {
@@ -40,6 +46,11 @@ function App() {
       setProducts((prev) => [...prev, formData]);
     }
     resetForm();
+  };
+
+  // Toggle featured status for a product
+  const handleToggleFeatured = (index) => {
+    setProducts((prev) => prev.map((p, i) => i === index ? { ...p, featured: !p.featured } : p));
   };
 
   const handleDeleteProduct = (index) => {
@@ -63,11 +74,48 @@ function App() {
         Create and manage beautiful product cards
       </p>
 
+      {/* Search Bar */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Search products..."
+          style={{ padding: '0.5rem 1rem', fontSize: '1rem', width: '300px', borderRadius: '6px', border: '1px solid #ccc' }}
+        />
+      </div>
+
+      {/* Featured Products Section */}
+      {products.filter(p => p.featured).length > 0 && (
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '2rem', color: '#222', marginBottom: '1rem' }}>Featured Products</h2>
+          <div className="product-list" style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            {products.filter(p => p.featured).slice(0, 3).map((product, idx) => (
+              <div className="product-card" key={idx} style={{ border: '2px solid #ffd700', boxShadow: '0 0 10px #ffe066' }}>
+                <div className="card-image-container">
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} className="card-image" />
+                  ) : (
+                    <div className="image-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', width: '100px' }}>
+                      <span style={{ color: '#888' }}>No Image</span>
+                    </div>
+                  )}
+                </div>
+                <h3>{product.name}</h3>
+                <p className="product-price">${product.price}</p>
+                <p className="product-info">{product.info}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Product List with Search and Featured Toggle */}
       <div className="product-list">
-        {products.length === 0 ? (
-          <p style={{ textAlign: 'center', marginTop: '2rem' }}>No products yet.</p>
+        {products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
+          <p style={{ textAlign: 'center', marginTop: '2rem' }}>No products found.</p>
         ) : (
-          products.map((product, idx) => (
+          products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map((product, idx) => (
             <div className="product-card" key={idx}>
               <div className="card-image-container">
                 {product.image && (
@@ -86,19 +134,21 @@ function App() {
                   className={`image-placeholder ${!product.image ? 'visible' : ''}`}
                   style={{ display: product.image ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', width: '100px' }}
                 >
-                 
                   <span style={{ color: '#888' }}>No Image</span>
                 </div>
               </div>
               <h3>{product.name}</h3>
               <p className="product-price">${product.price}</p>
               <p className="product-info">{product.info}</p>
-              <div style={{display: 'flex', gap: '0.5rem'}}>
+              <div style={{display: 'flex', gap: '0.5rem', alignItems: 'center'}}>
                 <button className="btn edit" onClick={() => handleEditProduct(idx)} style={{marginRight: '0.5rem'}}>
                   Edit
                 </button>
                 <button className="btn delete" onClick={() => handleDeleteProduct(idx)}>
                   <X size={16} /> Delete
+                </button>
+                <button className="btn" style={{marginLeft: '0.5rem', background: product.featured ? '#ffd700' : '#eee', color: '#222'}} onClick={() => handleToggleFeatured(idx)}>
+                  {product.featured ? 'Unfeature' : 'Feature'}
                 </button>
               </div>
             </div>
@@ -150,6 +200,16 @@ function App() {
                 placeholder="Product Info"
                 onChange={handleInputChange}
               />
+              <label style={{ display: 'flex', alignItems: 'center', margin: '0.5rem 0' }}>
+                <input
+                  type="checkbox"
+                  name="featured"
+                  checked={formData.featured}
+                  onChange={handleInputChange}
+                  style={{ marginRight: '0.5rem' }}
+                />
+                Featured Product
+              </label>
               <button className="btn" type="submit">
                 {editing ? 'Update Product' : 'Add Product'}
               </button>
