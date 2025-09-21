@@ -17,7 +17,6 @@
 }
 
 .body, body {
-  background: rgba(34, 40, 49, 0.5); /* 50% opacity dark background */
   color: var(--text-main);
   font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.12rem;
