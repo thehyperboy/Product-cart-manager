@@ -17,7 +17,7 @@
 }
 
 .body, body {
-  background: var(--bg);
+  background: rgba(34, 40, 49, 0.5); /* 50% opacity dark background */
   color: var(--text-main);
   font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.12rem;
@@ -35,7 +35,33 @@
   color: var(--primary-dark);
   font-weight: 900;
   font-family: inherit;
-  animation: fadeInDown 1.2s cubic-bezier(.4,0,.2,1);
+  animation: coolClassicTitle 1.6s cubic-bezier(.4,0,.2,1);
+  text-shadow: 0 4px 24px rgba(34,40,49,0.18), 0 1px 0 #fff;
+  position: relative;
+  background: linear-gradient(90deg, #ffd700 0%, #fffbe6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  letter-spacing: 2px;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
+@keyframes coolClassicTitle {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.96) skewX(-8deg);
+    text-shadow: none;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(8px) scale(1.04) skewX(2deg);
+    text-shadow: 0 8px 32px rgba(34,40,49,0.18);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) skewX(0deg);
+    text-shadow: 0 4px 24px rgba(34,40,49,0.18);
+  }
+}
 }
 
 .sub-heading {
