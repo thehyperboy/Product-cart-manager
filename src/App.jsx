@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
 
-function App() {
+function App({ onBack }) {
   const [products, setProducts] = useState(() => {
     const stored = localStorage.getItem('products');
     return stored ? JSON.parse(stored) : [];
@@ -67,6 +67,11 @@ function App() {
 
   return (
     <div className="body">
+      {onBack && (
+        <div style={{ position: 'absolute', left: 16, top: 16 }}>
+          <button className="btn" onClick={onBack} style={{ padding: '0.4rem 0.6rem' }}>Home</button>
+        </div>
+      )}
       <h1 className="heading" style={{fontSize: '3rem', fontWeight: 900, letterSpacing: '1.5px', color: '#111', marginBottom: '0.5rem'}}>
         Product Cart Manager
       </h1>
